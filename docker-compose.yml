@@ -18,6 +18,19 @@ services:
       - POSTGRES_DB=onlinejudge
       - POSTGRES_USER=onlinejudge
       - POSTGRES_PASSWORD=onlinejudge
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4:4.28
+    restart: always
+    environment:
+       PGADMIN_DEFAULT_EMAIL: binbon@gmail.com
+       PGADMIN_DEFAULT_PASSWORD: onlinejudge
+       PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    links:
+      - "oj-postgres:pgsql-server"
 
   judge-server:
     image: registry.cn-hangzhou.aliyuncs.com/onlinejudge/judge_server
@@ -44,7 +57,8 @@ services:
       # - judger_debug=1
   
   oj-backend:
-    image: registry.cn-hangzhou.aliyuncs.com/onlinejudge/oj_backend
+         #image: registry.cn-hangzhou.aliyuncs.com/onlinejudge/oj_backend
+    image: binbon095/myrep:latest
     container_name: oj-backend
     restart: always
     depends_on:
@@ -53,6 +67,7 @@ services:
       - judge-server
     volumes:
       - ./data/backend:/data
+      - ./data/backend/dist:/app/dist
     environment:
       - POSTGRES_DB=onlinejudge
       - POSTGRES_USER=onlinejudge
